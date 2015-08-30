@@ -325,17 +325,17 @@ static void aprsis_reconnect(struct aprsis *A)
 
 		if(debug) {
 			char addrstr[INET6_ADDRSTRLEN];
-			void *sin_ptr = NULL;
 			switch (a->ai_family) {
 				case AF_INET:
-					sin_ptr = &((struct sockaddr_in *) a->ai_addr)->sin_addr;
+					inet_ntop(AF_INET, &((struct sockaddr_in *) a->ai_addr)->sin_addr, addrstr, INET6_ADDRSTRLEN);
 					break;
 				case AF_INET6:
-					sin_ptr = &((struct sockaddr_in6 *) a->ai_addr)->sin6_addr;
+					inet_ntop(AF_INET6, &((struct sockaddr_in6 *) a->ai_addr)->sin6_addr, addrstr, INET6_ADDRSTRLEN);
+					break;
+				default:
+					strncpy(addrstr,'Unknown',INET6_ADDRSTRLEN);
 					break;
 			}
-			inet_ntop (a->ai_family, sin_ptr, addrstr, INET6_ADDRSTRLEN);
-
 			printf("aprsis connection attempt IPv%d address: %s\n",
 					(a->ai_family == PF_INET6) ? 6 : 4, addrstr);
 		}
