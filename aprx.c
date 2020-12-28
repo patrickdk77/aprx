@@ -686,3 +686,10 @@ void rflog(const char *portname, char direction, int discard, const char *tnc2bu
 #endif
 	}
 }
+
+void rflog2(const char *portname, char direction, int discard, const char *buf1, const char *buf2)
+{
+	char tmpstring[128];
+	snprintf(tmpstring,sizeof(tmpstring),"%s:%s", buf1, buf2);
+	rflog(portname, direction, discard, tmpstring, strlen(tmpstring));
+}

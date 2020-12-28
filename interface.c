@@ -1752,6 +1752,8 @@ static void ack_message(const struct aprx_interface *const srcif, const struct a
           aprsis_queue(destbuf, destlen,
                        qTYPE_LOCALGEN,
                        aprsis_login, txt, txtlen);
+
+          rflog2("APRSIS", 't', 0, destbuf, txt);
           return;
         }
         // TODO: ACK things sent via radio interfaces?

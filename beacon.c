@@ -1009,6 +1009,8 @@ static void beacon_it(struct beaconset *bset, struct beaconmsg *bm)
 		  aprsis_queue(destbuf, strlen(destbuf),
 			       qTYPE_LOCALGEN,
 			       aprsis_login, txt, txtlen);
+
+		  rflog2("APRSIS", 't', 0, destbuf, txt);
 		}
 #endif
 
@@ -1110,6 +1112,8 @@ static void beacon_it(struct beaconset *bset, struct beaconmsg *bm)
 		  aprsis_queue(destbuf, strlen(destbuf),
 			       qTYPE_LOCALGEN,
 			       aprsis_login, txt, txtlen);
+
+		  rflog2("APRSIS", 't', 0, destbuf, txt);
 		}
 #endif
 

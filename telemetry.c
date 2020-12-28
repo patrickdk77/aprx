@@ -319,6 +319,8 @@ static void telemetry_datatx(void) {
 			aprsis_queue(beaconaddr, beaconaddrlen, 
 					qTYPE_LOCALGEN, aprsis_login,
 					buf+2, buflen-2);
+
+			rflog2("APRSIS", 't', 0, beaconaddr, buf+2);
 		}
 #endif
 		rf_telemetry(sourceaif, beaconaddr, buf, buflen);
@@ -388,6 +390,8 @@ static void telemetry_labeltx()
 			aprsis_queue(beaconaddr, beaconaddrlen,
 					qTYPE_LOCALGEN, aprsis_login,
 					buf+2, buflen-2);
+
+			rflog2("APRSIS", 't', 0, beaconaddr, buf+2);
 		}
 #endif
 		rf_telemetry(sourceaif, beaconaddr, buf, buflen);
