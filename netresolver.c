@@ -38,8 +38,11 @@ struct netresolver *netresolv_add(const char *hostname, const char *port) {
 static void resolve_all(void) {
 	int i;
 
-	if (debug>1)
+	if (debug > 1 && nrcount > 0) {
 	  printf("netresolve nrcount=%d\n", nrcount);
+	} else if (debug>3) {
+	  printf("netresolve nrcount=%d\n", nrcount);
+	}
 
 	for (i = 0; i < nrcount; ++i) {
 		struct netresolver *n = nr[i];

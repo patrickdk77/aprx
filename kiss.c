@@ -188,6 +188,13 @@ static int kissprocess(struct serialport *S)
 
 	/* printf("kissprocess()  cmdbyte=%02X len=%d ",cmdbyte,S->rdlinelen); */
 
+	/*&&& dump every RX frame to debug log */
+	if (debug>2) {
+	  printf("%ld\tTTY %s: received KISS frame:\n", tick.tv_sec, S->ttyname);
+	  hexdumpfp(stdout, S->rdline, S->rdlinelen, 1);
+	  printf("\n");
+	}
+
 	/* Ok, cmdbyte tells us something, and we should ignore the
 	   frame if we don't know it... */
 

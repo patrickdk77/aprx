@@ -1216,7 +1216,7 @@ int beacon_postpoll(struct aprxpolls *app)
                 beacon_now(bset);
         }
 
-        if (debug>1) printf("beacon_postpoll()\n");
+        if (debug>3) printf("beacon_postpoll()\n");
 
 
 	return 0;

@@ -87,7 +87,7 @@ int telemetry_prepoll(struct aprxpolls *app) {
 		app->next_timeout = telemetry_labeltime;
 	}
 
-	if (debug>1) printf("telemetry_prepoll()\n");
+	if (debug>3) printf("telemetry_prepoll()\n");
 
 	return 0;
 }
@@ -96,7 +96,7 @@ static void telemetry_datatx(void);
 static void telemetry_labeltx(void);
 
 int telemetry_postpoll(struct aprxpolls *app) {
-	if (debug>1) {
+	if (debug>3) {
 		printf("telemetry_postpoll()  telemetrytime=%ds  labeltime=%ds\n",
 				tv_timerdelta_millis(&tick, &telemetry_time)/1000,
 				tv_timerdelta_millis(&tick, &telemetry_labeltime)/1000);
