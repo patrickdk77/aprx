@@ -57,8 +57,9 @@ static void sig_handler(int sig)
 	if (debug) {
           // Avoid stdio FILE* interlocks within signal handler
           char buf[64];
+	  int sts;
 	  sprintf(buf, "SIGNAL %d - DYING!\n", sig);
-          write(1, buf, strlen(buf));
+          sts = write(1, buf, strlen(buf));
         }
 }
 
@@ -265,9 +266,9 @@ int main(int argc, char *const argv[])
 		/* See if pidfile exists ? */
 		FILE *pf = fopen(pidfile, "r");
 		if (pf) {	/* See if the pid exists ? */
-			int rc, er;
+			int rc, er, sts;
 			int pid = -1;
-			fscanf(pf, "%d", &pid);
+			sts = fscanf(pf, "%d", &pid);
 			fclose(pf);
 
 			if (pid > 0) {
@@ -313,6 +314,7 @@ int main(int argc, char *const argv[])
 			pidfile = NULL;
 		} else {
 			int f = fileno(pf);
+			int t;
 			if (flock(f, LOCK_EX|LOCK_NB) < 0) {
 				if (errno == EWOULDBLOCK) {
 					printf("Could not lock pid file file %s, another process has a lock on it. Another process running - bailing out.\n", pidfile);
@@ -324,7 +326,7 @@ int main(int argc, char *const argv[])
 			
 			fprintf(pf, "%ld\n", (long) getpid());
 			// Leave it open - flock will prevent double-activation
-			dup(f); // don't care what the fd number is
+			t = dup(f); // don't care what the fd number is
 			fclose(pf);
 		}
 	}
