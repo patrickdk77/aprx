@@ -164,7 +164,17 @@ static int match_tracewide(const char *via, const struct tracewide *twp)
 	for (i = 0; i < twp->nkeys; ++i) {
 		// if (debug>2) printf(" match:'%s'",twp->keys[i]);
 		if (memcmp(via, twp->keys[i], twp->keylens[i]) == 0) {
-			return twp->keylens[i];
+			int keylen = twp->keylens[i];
+			if (via[keylen] == '\0') {
+				// Match bare alias
+				return keylen;
+			}
+			if (via[keylen] > '0' && via[keylen] <= '7' &&
+			    (via[keylen+1] == '-' || via[keylen+1] == '\0')) {
+				// Match n-N alias, either "WIDEn-..." or "WIDEn"
+				return keylen;
+			}
+			// False alarm; doesn't really match the whole alias
 		}
 	}
 	return 0;
@@ -1403,15 +1413,19 @@ static void digipeater_receive_backend(struct digipeater_source *src, struct pbu
 				if (debug) printf(" TRACE overgrows the VIA fields! Discard.\n");
 				return;
 			}
-			memmove(axaddr+AX25ADDRLEN, axaddr, taillen);
-			state.ax25addrlen += AX25ADDRLEN;
 
-			newssid = decrement_ssid(axaddr+AX25ADDRLEN);
-			if (newssid <= 0)
-				axaddr[2*AX25ADDRLEN-1] |= AX25HBIT; // Set H-bit
+			newssid = decrement_ssid(axaddr);
+			int alias_aterm = axaddr[AX25ADDRLEN-1] & AX25ATERM;
+			if (newssid > 0) {
+				memmove(axaddr+AX25ADDRLEN, axaddr, taillen);
+				state.ax25addrlen += AX25ADDRLEN;
+			}
 			// Put the transmitter callsign in, and set the H-bit.
 			memcpy(axaddr, digi->transmitter->ax25call, AX25ADDRLEN);
 			axaddr[AX25ADDRLEN-1] |= AX25HBIT; // Set H-bit
+			if (newssid <= 0) { // Copy over the ATERM bit if we dropped it
+				axaddr[AX25ADDRLEN-1] |= alias_aterm;
+			}
 
 		} else if (viastate.hopsreq > viastate.hopsdone) {
 			// If configuration didn't process "WIDE" et.al. as
@@ -1464,11 +1478,11 @@ static void digipeater_receive_backend(struct digipeater_source *src, struct pbu
 		}
 		digi->tokenbucket -= 1.0;
 
+		// Log outgoing traffic to the RF log
 		if (pb->is_aprs && rflogfile) {
 			int t2l2;
-			// Essentially Debug logging.. to file
 
-			if (sizeof(tbuf) - pb->ax25datalen > t2l && t2l > 0) {
+			if (sizeof(tbuf) > t2l + pb->ax25datalen && t2l > 0) {
 				// Have space for body too, skip leading Ctrl+PID bytes
 				memcpy(tbuf+t2l, pb->ax25data+2, pb->ax25datalen-2); // Ctrl+PID skiped
 				t2l2 = t2l + pb->ax25datalen-2; // tbuf size sans Ctrl+PID

@@ -8,7 +8,8 @@
  *                                                                  *
  * **************************************************************** */
 
-#define _SVID_SOURCE 1
+//&&&#define _SVID_SOURCE 1
+#define _DEFAULT_SOURCE 1
 
 #include "aprx.h"
 

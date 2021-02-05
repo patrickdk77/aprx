@@ -688,8 +688,8 @@ int beacon_config(struct configfile *cf)
 
 static void fix_beacon_time(char *txt, int txtlen)
 {
-	int hour, min, sec;
-	char hms[8];
+	unsigned int hour, min, sec;
+	char hms[16];
 	struct timeval zulutime;
 
 	gettimeofday(&zulutime, NULL);
@@ -697,7 +697,7 @@ static void fix_beacon_time(char *txt, int txtlen)
 	hour = sec / 3600;
 	min  = (sec / 60) % 60;
 	sec  = sec % 60;
-	sprintf(hms, "%02d%02d%02dh", hour, min, sec);
+	snprintf(hms, sizeof(hms), "%02d%02d%02dh", hour, min, sec);
 
 	txt += 2; txtlen -= 2; // Skip Control+PID
 
@@ -1009,6 +1009,8 @@ static void beacon_it(struct beaconset *bset, struct beaconmsg *bm)
 		  aprsis_queue(destbuf, strlen(destbuf),
 			       qTYPE_LOCALGEN,
 			       aprsis_login, txt, txtlen);
+
+		  rflog2("APRSIS", 't', 0, destbuf, txt);
 		}
 #endif
 
@@ -1110,6 +1112,8 @@ static void beacon_it(struct beaconset *bset, struct beaconmsg *bm)
 		  aprsis_queue(destbuf, strlen(destbuf),
 			       qTYPE_LOCALGEN,
 			       aprsis_login, txt, txtlen);
+
+		  rflog2("APRSIS", 't', 0, destbuf, txt);
 		}
 #endif
 
@@ -1212,7 +1216,7 @@ int beacon_postpoll(struct aprxpolls *app)
                 beacon_now(bset);
         }
 
-        if (debug>1) printf("beacon_postpoll()\n");
+        if (debug>3) printf("beacon_postpoll()\n");
 
 
 	return 0;
@@ -1228,8 +1232,9 @@ void beacon_childexit(int pid)
                         if (debug) {
                           // Avoid stdio FILE* interlocks within signal handler
                           char buf[64];
+                          int sts;
                           sprintf(buf, "matched child exit, pid=%d\n", pid);
-                          write(1, buf, strlen(buf));
+                          sts = write(1, buf, strlen(buf));
                         }
                         break;
                 }

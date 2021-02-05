@@ -25,3 +25,5 @@ debian/files
 *.o
 *.d
 
+myaprx.conf
+tmp/

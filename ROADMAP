@@ -1,26 +1,10 @@
-		Aprx Roadmap and Future Directions
+
+          APRX ROADMAP
 
 
-Version 1
-    - APRS Rx-only iGate				- Complete, working
-    - channel activity monitoring and telemetry		- Complete, working
+v2.9.x - Stable release with only bug-fixes
+    Pretty much everyone should be using this version
 
+v2.10.x - Development branch for new feature experimentation
+    Version for developers who'd like to help test new features for Aprx
 
-Version 2
-    - Digipeater					- Working
-      - Analyze and detect station distance             - Working
-    - Radio beacons					- Working
-    - Bidirection (Rx/Tx) APRS iGate			- Working
-    - DPRS->APRS GW	       				- Working
-
-Version 2+
-
-    - Port to ucLinux	       				- Planned (pthread OK)
-
-    - Port to Windows
-
-    - Automated coverage statistics analyzer, and
-      reporting it via digi node identity beacons.
-            "ALOHA circles"
-
-    - Automated coverage plotting
